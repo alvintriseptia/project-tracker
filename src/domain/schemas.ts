@@ -7,6 +7,9 @@ const requiredText = z.string().trim().min(1);
 const instantSchema = z.iso.datetime({ offset: true });
 const localDateSchema = z.string().refine(isLocalDate, "Use a real date in YYYY-MM-DD format.");
 const nonNegativeInteger = z.number().int().min(0);
+const yearMonthSchema = z
+  .string()
+  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Use YYYY-MM format.");
 
 export const trackSchema = z.object({
   id: requiredText,
@@ -41,6 +44,99 @@ export const activitySchema = z.object({
   tags: z.array(z.string()).transform(normalizeTags),
   artifactIds: z.array(requiredText),
   metadata: z.record(z.string(), z.unknown()).optional(),
+  createdAt: instantSchema,
+  updatedAt: instantSchema,
+});
+
+export const weeklyReviewDetailsSchema = z.object({
+  kind: z.literal("weekly_review"),
+  weekStart: localDateSchema,
+  weekEnd: localDateSchema,
+  wentWell: z.string(),
+  skippedOrAvoided: z.string(),
+  bestArtifactId: requiredText.optional(),
+  weakestTrackId: requiredText.optional(),
+  consistencyHelp: z.string(),
+  consistencyBlocker: z.string(),
+  nextWeekPriority: z.string(),
+});
+
+export const monthlyReviewDetailsSchema = z.object({
+  kind: z.literal("monthly_review"),
+  month: yearMonthSchema,
+  majorProgress: z.string(),
+  unfinishedWork: z.string(),
+  strongestTrackId: requiredText.optional(),
+  weakestTrackId: requiredText.optional(),
+  bestArtifactId: requiredText.optional(),
+  mainLesson: z.string(),
+  nextMonthFocus: z.string(),
+});
+
+export const genericArtifactDetailsSchema = z
+  .object({ kind: z.literal("generic") })
+  .catchall(z.unknown());
+
+export const artifactDetailsSchema = z.union([
+  weeklyReviewDetailsSchema,
+  monthlyReviewDetailsSchema,
+  genericArtifactDetailsSchema,
+]);
+
+export const artifactSchema = z.object({
+  id: requiredText,
+  type: z.enum([
+    "devlog",
+    "taste_note",
+    "conversation_reflection",
+    "english_note",
+    "korean_note",
+    "vinance_milestone",
+    "weekly_review",
+    "monthly_review",
+    "marathon_reflection",
+    "custom",
+  ]),
+  title: requiredText,
+  date: localDateSchema,
+  trackId: requiredText.optional(),
+  tags: z.array(z.string()).transform(normalizeTags),
+  status: z.enum([
+    "idea",
+    "drafting",
+    "reviewed",
+    "published",
+    "completed",
+    "archived",
+  ]),
+  content: z.string(),
+  externalLink: z
+    .url()
+    .refine((value) => ["http:", "https:"].includes(new URL(value).protocol))
+    .optional(),
+  details: artifactDetailsSchema,
+  createdAt: instantSchema,
+  updatedAt: instantSchema,
+});
+
+export const missionChecklistItemSchema = z.object({
+  id: requiredText,
+  label: requiredText,
+  completed: z.boolean(),
+  completedAt: instantSchema.optional(),
+});
+
+export const monthlyMissionSchema = z.object({
+  id: requiredText,
+  month: yearMonthSchema,
+  title: requiredText,
+  theme: requiredText,
+  description: z.string().optional(),
+  checklist: z.array(missionChecklistItemSchema),
+  targetArtifactIds: z.array(requiredText),
+  notes: z.string(),
+  reviewArtifactId: requiredText.optional(),
+  completed: z.boolean(),
   createdAt: instantSchema,
   updatedAt: instantSchema,
 });
@@ -94,4 +190,4 @@ export const databaseMetadataSchema = z.object({
   lastBackupAt: instantSchema.optional(),
 });
 
-export { instantSchema, localDateSchema };
+export { instantSchema, localDateSchema, yearMonthSchema };

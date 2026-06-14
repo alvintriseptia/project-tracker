@@ -1,6 +1,17 @@
-import { appSettingsSchema, databaseMetadataSchema, trackSchema } from "../domain/schemas";
+import {
+  appSettingsSchema,
+  databaseMetadataSchema,
+  monthlyMissionSchema,
+  trackSchema,
+} from "../domain/schemas";
 import { todayInTimeZone } from "../domain/dates";
-import type { AppSettings, DatabaseMetadata, Track } from "../domain/types";
+import type {
+  AppSettings,
+  DatabaseMetadata,
+  MonthlyMission,
+  Track,
+} from "../domain/types";
+import { createSeedMissions } from "../seed/missions";
 import { createSeedTracks } from "../seed/tracks";
 import {
   SCHEMA_VERSION,
@@ -36,6 +47,7 @@ export async function initializeDatabase(
     database.tracks,
     database.settings,
     database.metadata,
+    database.missions,
     async () => {
       const existingTrackIds = new Set(
         (await database.tracks.toCollection().primaryKeys()).map(String),
@@ -75,6 +87,24 @@ export async function initializeDatabase(
           initializedAt: timestamp,
         }) as DatabaseMetadata;
         await database.metadata.add(metadata);
+      } else {
+        await database.metadata.update("database", {
+          schemaVersion: SCHEMA_VERSION,
+          seedVersion: SEED_VERSION,
+        });
+      }
+
+      const existingMissionIds = new Set(
+        (await database.missions.toCollection().primaryKeys()).map(String),
+      );
+      const missingMissions = createSeedMissions(timestamp)
+        .filter((mission) => !existingMissionIds.has(mission.id))
+        .map(
+          (mission) =>
+            monthlyMissionSchema.parse(mission) as MonthlyMission,
+        );
+      if (missingMissions.length > 0) {
+        await database.missions.bulkAdd(missingMissions);
       }
     },
   );

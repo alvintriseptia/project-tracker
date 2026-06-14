@@ -1,10 +1,12 @@
 import type {
   Activity,
   AppSettings,
+  Artifact,
   BackupEnvelope,
   DatabaseMetadata,
   DateRange,
   EntityId,
+  MonthlyMission,
   Track,
 } from "../domain/types";
 import type { NoZeroDatabase } from "./database";
@@ -62,6 +64,50 @@ export class TrackRepository {
 
   put(track: Track): Promise<string> {
     return this.database.tracks.put(track);
+  }
+}
+
+export class ArtifactRepository {
+  constructor(private readonly database: NoZeroDatabase) {}
+
+  get(id: EntityId): Promise<Artifact | undefined> {
+    return this.database.artifacts.get(id);
+  }
+
+  list(): Promise<Artifact[]> {
+    return this.database.artifacts.orderBy("date").reverse().toArray();
+  }
+
+  listByDateRange(range: DateRange): Promise<Artifact[]> {
+    return this.database.artifacts
+      .where("date")
+      .between(range.from, range.to, true, true)
+      .reverse()
+      .sortBy("date");
+  }
+
+  listByType(type: Artifact["type"]): Promise<Artifact[]> {
+    return this.database.artifacts.where("type").equals(type).reverse().sortBy("date");
+  }
+
+  put(artifact: Artifact): Promise<string> {
+    return this.database.artifacts.put(artifact);
+  }
+}
+
+export class MissionRepository {
+  constructor(private readonly database: NoZeroDatabase) {}
+
+  list(): Promise<MonthlyMission[]> {
+    return this.database.missions.orderBy("month").toArray();
+  }
+
+  get(month: string): Promise<MonthlyMission | undefined> {
+    return this.database.missions.where("month").equals(month).first();
+  }
+
+  put(mission: MonthlyMission): Promise<string> {
+    return this.database.missions.put(mission);
   }
 }
 

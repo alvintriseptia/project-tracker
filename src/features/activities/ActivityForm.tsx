@@ -21,6 +21,7 @@ export function ActivityForm({
   today,
   initialTrackId,
   initialTitle,
+  initialDate,
   activity,
   onSubmit,
   onDirtyChange,
@@ -29,6 +30,7 @@ export function ActivityForm({
   today: LocalDate;
   initialTrackId?: string;
   initialTitle?: string;
+  initialDate?: LocalDate;
   activity?: Activity;
   onSubmit: (values: ActivityFormValues) => Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
@@ -54,7 +56,7 @@ export function ActivityForm({
       trackId: activity?.trackId ?? initialTrack?.id ?? "",
       level: activity?.level ?? "minimum",
       title: activity?.title ?? initialTitle ?? "",
-      date: activity?.date ?? today,
+      date: activity?.date ?? initialDate ?? today,
       durationMinutes: activity?.durationMinutes,
       note: activity?.note ?? "",
       points: activity?.points ?? initialTrack?.defaultPoints ?? 0,

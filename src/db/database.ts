@@ -13,7 +13,7 @@ import type {
 
 export const DATABASE_NAME = "no-zero";
 export const SCHEMA_VERSION = 1;
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
 export class NoZeroDatabase extends Dexie {
   tracks!: EntityTable<Track, "id">;

@@ -20,6 +20,27 @@ const SettingsPage = lazy(() =>
     default: module.SettingsPage,
   })),
 );
+const ArtifactsPage = lazy(() =>
+  import("../features/artifacts/ArtifactsPage").then((module) => ({ default: module.ArtifactsPage })),
+);
+const ArtifactEditorPage = lazy(() =>
+  import("../features/artifacts/ArtifactEditorPage").then((module) => ({ default: module.ArtifactEditorPage })),
+);
+const ArtifactDetailPage = lazy(() =>
+  import("../features/artifacts/ArtifactDetailPage").then((module) => ({ default: module.ArtifactDetailPage })),
+);
+const WeeklyReviewPage = lazy(() =>
+  import("../features/reviews/WeeklyReviewPage").then((module) => ({ default: module.WeeklyReviewPage })),
+);
+const MissionsPage = lazy(() =>
+  import("../features/missions/MissionsPage").then((module) => ({ default: module.MissionsPage })),
+);
+const MissionDetailPage = lazy(() =>
+  import("../features/missions/MissionDetailPage").then((module) => ({ default: module.MissionDetailPage })),
+);
+const CalendarPage = lazy(() =>
+  import("../features/calendar/CalendarPage").then((module) => ({ default: module.CalendarPage })),
+);
 
 function deferred(element: React.ReactNode) {
   return (
@@ -40,6 +61,14 @@ export const router = createBrowserRouter(
           path: "projects/:trackId",
           element: deferred(<ProjectDetailPage />),
         },
+        { path: "calendar", element: deferred(<CalendarPage />) },
+        { path: "reviews/weekly", element: deferred(<WeeklyReviewPage />) },
+        { path: "missions", element: deferred(<MissionsPage />) },
+        { path: "missions/:month", element: deferred(<MissionDetailPage />) },
+        { path: "artifacts", element: deferred(<ArtifactsPage />) },
+        { path: "artifacts/new/:type?", element: deferred(<ArtifactEditorPage />) },
+        { path: "artifacts/:artifactId/edit", element: deferred(<ArtifactEditorPage />) },
+        { path: "artifacts/:artifactId", element: deferred(<ArtifactDetailPage />) },
         { path: "settings", element: deferred(<SettingsPage />) },
         { path: "*", element: <NotFoundPage /> },
       ],

@@ -95,3 +95,34 @@ export function isWithinRange(date: LocalDate, range: DateRange): boolean {
     compareLocalDates(date, range.to) <= 0
   );
 }
+
+export function daysInLocalDateRange(range: DateRange): LocalDate[] {
+  const dates: LocalDate[] = [];
+  let cursor = range.from;
+  while (compareLocalDates(cursor, range.to) <= 0) {
+    dates.push(cursor);
+    cursor = shiftLocalDate(cursor, 1);
+  }
+  return dates;
+}
+
+export function yearMonthFromDate(date: LocalDate): string {
+  assertLocalDate(date);
+  return date.slice(0, 7);
+}
+
+export function monthRange(month: string): DateRange {
+  if (!/^\d{4}-\d{2}$/.test(month)) {
+    throw new Error(`Invalid year month: ${month}`);
+  }
+  const first = `${month}-01`;
+  assertLocalDate(first);
+  const nextMonthDate = addDays(
+    new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 1)),
+    -1,
+  )
+    .toISOString()
+    .slice(0, 10);
+  assertLocalDate(nextMonthDate);
+  return { from: first, to: nextMonthDate };
+}

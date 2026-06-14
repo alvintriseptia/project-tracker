@@ -64,6 +64,41 @@ export type ArtifactStatus =
   | "completed"
   | "archived";
 
+export type WeeklyReviewDetails = {
+  kind: "weekly_review";
+  weekStart: LocalDate;
+  weekEnd: LocalDate;
+  wentWell: string;
+  skippedOrAvoided: string;
+  bestArtifactId?: EntityId;
+  weakestTrackId?: EntityId;
+  consistencyHelp: string;
+  consistencyBlocker: string;
+  nextWeekPriority: string;
+};
+
+export type MonthlyReviewDetails = {
+  kind: "monthly_review";
+  month: YearMonth;
+  majorProgress: string;
+  unfinishedWork: string;
+  strongestTrackId?: EntityId;
+  weakestTrackId?: EntityId;
+  bestArtifactId?: EntityId;
+  mainLesson: string;
+  nextMonthFocus: string;
+};
+
+export type GenericArtifactDetails = {
+  kind: "generic";
+  [key: string]: unknown;
+};
+
+export type ArtifactDetails =
+  | WeeklyReviewDetails
+  | MonthlyReviewDetails
+  | GenericArtifactDetails;
+
 export type Artifact = AuditFields & {
   id: EntityId;
   type: ArtifactType;
@@ -74,7 +109,7 @@ export type Artifact = AuditFields & {
   status: ArtifactStatus;
   content: string;
   externalLink?: string;
-  details: Record<string, unknown>;
+  details: ArtifactDetails;
 };
 
 export type MissionChecklistItem = {

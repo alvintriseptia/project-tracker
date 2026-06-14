@@ -2,7 +2,8 @@
 
 No Zero is a private, local-first semester challenge tracker. Phase 1 provides
 daily activity CRUD, no-zero streaks, weekly points and project targets,
-project configuration, full JSON backup, and an installable offline PWA.
+project configuration, generic artifacts, weekly reviews, monthly missions,
+calendar history, full JSON backup, and an installable offline PWA.
 
 ## Requirements
 

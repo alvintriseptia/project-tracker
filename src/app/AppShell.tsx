@@ -2,10 +2,14 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
   CalendarCheck2,
+  CalendarDays,
+  ClipboardCheck,
+  FileText,
   FolderKanban,
   Menu,
   Plus,
   Settings,
+  Target,
 } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
@@ -21,6 +25,10 @@ const settingsRepository = new SettingsRepository(db);
 const navigation = [
   { to: "/", label: "Today", icon: CalendarCheck2 },
   { to: "/projects", label: "Projects", icon: FolderKanban },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/reviews/weekly", label: "Weekly Review", icon: ClipboardCheck },
+  { to: "/missions", label: "Missions", icon: Target },
+  { to: "/artifacts", label: "Artifacts", icon: FileText },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -89,10 +97,10 @@ function ShellContent() {
       </div>
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t border-line bg-surface/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-surface/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden"
         aria-label="Mobile navigation"
       >
-        {navigation.slice(0, 2).map((item) => (
+        {navigation.slice(0, 3).map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -120,15 +128,17 @@ function ShellContent() {
               align="end"
               className="z-50 min-w-48 rounded-xl border border-line bg-surface p-1 shadow-xl"
             >
-              <DropdownMenu.Item asChild>
-                <NavLink
-                  to="/settings"
-                  className="flex min-h-11 items-center gap-2 rounded-lg px-3 font-semibold outline-none focus:bg-black/5"
-                >
-                  <Settings size={18} />
-                  Settings
-                </NavLink>
-              </DropdownMenu.Item>
+              {navigation.slice(3).map((item) => (
+                <DropdownMenu.Item asChild key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      className="flex min-h-11 items-center gap-2 rounded-lg px-3 font-semibold outline-none focus:bg-black/5"
+                    >
+                      <item.icon size={18} />
+                      {item.label}
+                    </NavLink>
+                </DropdownMenu.Item>
+              ))}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>

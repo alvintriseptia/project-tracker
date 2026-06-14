@@ -18,6 +18,7 @@ const repository = new ActivityRepository(db);
 export type ActivityPrefill = {
   trackId?: string;
   title?: string;
+  date?: LocalDate;
 };
 
 export function ActivityDialog({
@@ -112,6 +113,7 @@ export function ActivityDialog({
             today={today}
             {...(prefill?.trackId ? { initialTrackId: prefill.trackId } : {})}
             {...(prefill?.title ? { initialTitle: prefill.title } : {})}
+            {...(prefill?.date ? { initialDate: prefill.date } : {})}
             {...(activity ? { activity } : {})}
             onSubmit={submit}
             onDirtyChange={updateDirty}

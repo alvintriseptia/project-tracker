@@ -28,6 +28,7 @@ describe("backup export", () => {
     expect(backup.envelope.data.tracks).toHaveLength(6);
     expect(backup.envelope.data.activities).toHaveLength(1);
     expect(backup.envelope.data.artifacts).toEqual([]);
+    expect(backup.envelope.data.missions).toHaveLength(7);
     expect(JSON.parse(backup.json)).toEqual(backup.envelope);
     database.close();
   });
