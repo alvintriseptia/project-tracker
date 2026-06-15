@@ -487,12 +487,23 @@ describe("specialized artifact workflows", () => {
       lesson: "",
     });
 
+    for (const type of specializedArtifactTypes) {
+      expect(defaultDetails(type)).not.toBe(defaultDetails(type));
+    }
+
     const firstKoreanDefault = defaultDetails("korean_note");
     const secondKoreanDefault = defaultDetails("korean_note");
     firstKoreanDefault.wordsLearned.push("안녕");
+    firstKoreanDefault.phrasesLearned.push("감사합니다");
 
     expect(secondKoreanDefault.wordsLearned).toEqual([]);
-    expect(firstKoreanDefault).not.toBe(secondKoreanDefault);
+    expect(secondKoreanDefault.phrasesLearned).toEqual([]);
+    expect(firstKoreanDefault.wordsLearned).not.toBe(
+      secondKoreanDefault.wordsLearned,
+    );
+    expect(firstKoreanDefault.phrasesLearned).not.toBe(
+      secondKoreanDefault.phrasesLearned,
+    );
   });
 
   it("exports the approved conversation question bank", () => {

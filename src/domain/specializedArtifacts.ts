@@ -1,10 +1,6 @@
 import type {
-  ConversationArtifactDetails,
-  DevlogArtifactDetails,
-  EnglishArtifactDetails,
-  KoreanArtifactDetails,
-  MarathonArtifactDetails,
-  TasteArtifactDetails,
+  ArtifactDetails,
+  ArtifactType,
 } from "./types";
 
 export const specializedArtifactTypes = [
@@ -14,9 +10,25 @@ export const specializedArtifactTypes = [
   "taste_note",
   "conversation_reflection",
   "marathon_reflection",
-] as const;
+] as const satisfies readonly ArtifactType[];
 
 export type SpecializedArtifactType = (typeof specializedArtifactTypes)[number];
+
+type SpecializedDetails<Type extends SpecializedArtifactType> = Extract<
+  ArtifactDetails,
+  { kind: Type }
+>;
+
+type ExhaustiveOptions<
+  Union,
+  Options extends readonly Union[],
+> = Exclude<Union, Options[number]> extends never ? Options : never;
+
+function defineExhaustiveOptions<Union>() {
+  return <const Options extends readonly Union[]>(
+    options: ExhaustiveOptions<Union, Options>,
+  ): Options => options;
+}
 
 export const specializedWorkflows = {
   english_note: {
@@ -57,86 +69,103 @@ export const specializedWorkflows = {
   }
 >;
 
-export const englishPracticeTypes = [
-  "speaking",
-  "writing",
-  "voice_recording",
-  "technical_explanation",
-  "career_answer",
-  "reflection",
-  "devlog_drafting",
-  "mock_interview",
-] as const satisfies readonly EnglishArtifactDetails["practiceType"][];
+export const englishPracticeTypes =
+  defineExhaustiveOptions<
+    SpecializedDetails<"english_note">["practiceType"]
+  >()([
+    "speaking",
+    "writing",
+    "voice_recording",
+    "technical_explanation",
+    "career_answer",
+    "reflection",
+    "devlog_drafting",
+    "mock_interview",
+  ] as const);
 
-export const englishTemplateOptions = [
-  "none",
-  "technical_explanation",
-  "career_answer",
-  "weekly_reflection",
-] as const satisfies readonly EnglishArtifactDetails["template"][];
+export const englishTemplateOptions =
+  defineExhaustiveOptions<SpecializedDetails<"english_note">["template"]>()([
+    "none",
+    "technical_explanation",
+    "career_answer",
+    "weekly_reflection",
+  ] as const);
 
-export const koreanActivityTypes = [
-  "vocabulary_review",
-  "hangul_reading",
-  "listening",
-  "short_lesson",
-  "grammar_note",
-  "media_observation",
-  "phrase_collection",
-] as const satisfies readonly KoreanArtifactDetails["activityType"][];
+export const koreanActivityTypes =
+  defineExhaustiveOptions<
+    SpecializedDetails<"korean_note">["activityType"]
+  >()([
+    "vocabulary_review",
+    "hangul_reading",
+    "listening",
+    "short_lesson",
+    "grammar_note",
+    "media_observation",
+    "phrase_collection",
+  ] as const);
 
-export const koreanEnjoymentOptions = [
-  "fun",
-  "neutral",
-  "difficult",
-] as const satisfies readonly KoreanArtifactDetails["enjoyment"][];
+export const koreanEnjoymentOptions =
+  defineExhaustiveOptions<SpecializedDetails<"korean_note">["enjoyment"]>()([
+    "fun",
+    "neutral",
+    "difficult",
+  ] as const);
 
-export const devlogTypes = [
-  "product_devlog",
-  "technical_note",
-  "weekly_reflection",
-  "marathon_essay",
-  "learning_note",
-  "taste_reflection",
-  "conversation_insight",
-  "portfolio_post",
-] as const satisfies readonly DevlogArtifactDetails["devlogType"][];
+export const devlogTypes =
+  defineExhaustiveOptions<SpecializedDetails<"devlog">["devlogType"]>()([
+    "product_devlog",
+    "technical_note",
+    "weekly_reflection",
+    "marathon_essay",
+    "learning_note",
+    "taste_reflection",
+    "conversation_insight",
+    "portfolio_post",
+  ] as const);
 
-export const tasteCategories = [
-  "food_drink",
-  "place",
-  "product",
-  "visual_design",
-  "storytelling",
-  "lifestyle",
-  "software_app",
-  "city_observation",
-  "coffee_shop",
-  "custom",
-] as const satisfies readonly TasteArtifactDetails["category"][];
+export const tasteCategories =
+  defineExhaustiveOptions<SpecializedDetails<"taste_note">["category"]>()([
+    "food_drink",
+    "place",
+    "product",
+    "visual_design",
+    "storytelling",
+    "lifestyle",
+    "software_app",
+    "city_observation",
+    "coffee_shop",
+    "custom",
+  ] as const);
 
-export const conversationActivityTypes = [
-  "intentional_question",
-  "deep_conversation",
-  "alumni_dinner",
-  "career_conversation",
-  "friend_conversation",
-  "family_conversation",
-  "community_conversation",
-  "follow_up",
-] as const satisfies readonly ConversationArtifactDetails["activityType"][];
+export const conversationActivityTypes =
+  defineExhaustiveOptions<
+    SpecializedDetails<"conversation_reflection">["activityType"]
+  >()([
+    "intentional_question",
+    "deep_conversation",
+    "alumni_dinner",
+    "career_conversation",
+    "friend_conversation",
+    "family_conversation",
+    "community_conversation",
+    "follow_up",
+  ] as const);
 
-export const marathonReflectionTypes = [
-  "long_run_reflection",
-  "training_lesson",
-  "race_preparation",
-  "recovery_note",
-  "discipline_note",
-] as const satisfies readonly MarathonArtifactDetails["reflectionType"][];
+export const marathonReflectionTypes =
+  defineExhaustiveOptions<
+    SpecializedDetails<"marathon_reflection">["reflectionType"]
+  >()([
+    "long_run_reflection",
+    "training_lesson",
+    "race_preparation",
+    "recovery_note",
+    "discipline_note",
+  ] as const);
 
-export const oneToFiveRatings = [
-  1, 2, 3, 4, 5,
-] as const satisfies readonly EnglishArtifactDetails["confidence"][];
+export const oneToFiveRatings =
+  defineExhaustiveOptions<
+    SpecializedDetails<"english_note">["confidence"]
+  >()([1, 2, 3, 4, 5] as const);
 
 export const conversationQuestions = [
   "What skill helped you most after college?",
@@ -169,7 +198,7 @@ export const englishTemplates = {
 - What will I improve next week?
 `,
 } as const satisfies Record<
-  Exclude<EnglishArtifactDetails["template"], "none">,
+  Exclude<SpecializedDetails<"english_note">["template"], "none">,
   string
 >;
 
@@ -194,20 +223,11 @@ export const devlogTemplate = `# Devlog Week X — Title
 ...
 `;
 
-type SpecializedDetailsByType = {
-  english_note: EnglishArtifactDetails;
-  korean_note: KoreanArtifactDetails;
-  devlog: DevlogArtifactDetails;
-  taste_note: TasteArtifactDetails;
-  conversation_reflection: ConversationArtifactDetails;
-  marathon_reflection: MarathonArtifactDetails;
-};
-
 export type SpecializedArtifactDetails =
-  SpecializedDetailsByType[SpecializedArtifactType];
+  SpecializedDetails<SpecializedArtifactType>;
 
 const defaultDetailFactories = {
-  english_note: (): EnglishArtifactDetails => ({
+  english_note: (): SpecializedDetails<"english_note"> => ({
     kind: "english_note",
     practiceType: englishPracticeTypes[0],
     topic: "",
@@ -218,7 +238,7 @@ const defaultDetailFactories = {
     improvedVersion: "",
     template: englishTemplateOptions[0],
   }),
-  korean_note: (): KoreanArtifactDetails => ({
+  korean_note: (): SpecializedDetails<"korean_note"> => ({
     kind: "korean_note",
     activityType: koreanActivityTypes[0],
     wordsLearned: [],
@@ -228,12 +248,12 @@ const defaultDetailFactories = {
     enjoyment: koreanEnjoymentOptions[0],
     notes: "",
   }),
-  devlog: (): DevlogArtifactDetails => ({
+  devlog: (): SpecializedDetails<"devlog"> => ({
     kind: "devlog",
     devlogType: devlogTypes[0],
     wordCount: 0,
   }),
-  taste_note: (): TasteArtifactDetails => ({
+  taste_note: (): SpecializedDetails<"taste_note"> => ({
     kind: "taste_note",
     category: tasteCategories[0],
     rating: 3,
@@ -243,18 +263,19 @@ const defaultDetailFactories = {
     reasoning: "",
     reusableInsight: "",
   }),
-  conversation_reflection: (): ConversationArtifactDetails => ({
-    kind: "conversation_reflection",
-    activityType: conversationActivityTypes[0],
-    context: "",
-    questionAsked: "",
-    bestInsight: "",
-    selfObservation: "",
-    improvement: "",
-    followUpAction: "",
-    followUpCompleted: false,
-  }),
-  marathon_reflection: (): MarathonArtifactDetails => ({
+  conversation_reflection:
+    (): SpecializedDetails<"conversation_reflection"> => ({
+      kind: "conversation_reflection",
+      activityType: conversationActivityTypes[0],
+      context: "",
+      questionAsked: "",
+      bestInsight: "",
+      selfObservation: "",
+      improvement: "",
+      followUpAction: "",
+      followUpCompleted: false,
+    }),
+  marathon_reflection: (): SpecializedDetails<"marathon_reflection"> => ({
     kind: "marathon_reflection",
     reflectionType: marathonReflectionTypes[0],
     energy: 3,
@@ -264,12 +285,12 @@ const defaultDetailFactories = {
     lesson: "",
   }),
 } satisfies {
-  [Type in SpecializedArtifactType]: () => SpecializedDetailsByType[Type];
+  [Type in SpecializedArtifactType]: () => SpecializedDetails<Type>;
 };
 
 export function defaultDetails<Type extends SpecializedArtifactType>(
   type: Type,
-): SpecializedDetailsByType[Type];
+): SpecializedDetails<Type>;
 export function defaultDetails(
   type: SpecializedArtifactType,
 ): SpecializedArtifactDetails {
