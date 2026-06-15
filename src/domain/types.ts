@@ -161,10 +161,10 @@ export type TasteArtifactDetails = {
     | "city_observation"
     | "coffee_shop"
     | "custom";
-  customCategory?: string;
-  location?: string;
-  rating?: 1 | 2 | 3 | 4 | 5;
-  photoReference?: string;
+  customCategory?: string | undefined;
+  location?: string | undefined;
+  rating?: 1 | 2 | 3 | 4 | 5 | undefined;
+  photoReference?: string | undefined;
   firstImpression: string;
   good: string;
   bad: string;
@@ -185,7 +185,7 @@ export type ConversationArtifactDetails = {
     | "community_conversation"
     | "follow_up";
   context: string;
-  personOrGroup?: string;
+  personOrGroup?: string | undefined;
   questionAsked: string;
   bestInsight: string;
   selfObservation: string;
@@ -203,8 +203,8 @@ export type MarathonArtifactDetails = {
     | "race_preparation"
     | "recovery_note"
     | "discipline_note";
-  distanceKm?: number;
-  pace?: string;
+  distanceKm?: number | undefined;
+  pace?: string | undefined;
   energy: 1 | 2 | 3 | 4 | 5;
   mentalCondition: string;
   worked: string;

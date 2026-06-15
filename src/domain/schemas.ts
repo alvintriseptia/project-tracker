@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+import type {
+  ConversationArtifactDetails,
+  DevlogArtifactDetails,
+  EnglishArtifactDetails,
+  KoreanArtifactDetails,
+  MarathonArtifactDetails,
+  TasteArtifactDetails,
+} from "./types";
 import { isLocalDate } from "./dates";
 import { normalizeTags } from "./tags";
 
@@ -10,26 +18,32 @@ const nonNegativeInteger = z.number().int().min(0);
 const yearMonthSchema = z
   .string()
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Use YYYY-MM format.");
-const oneToFiveInteger = z.number().int().min(1).max(5);
+const oneToFiveInteger = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+]);
 
 export const optionalHttpOrText = z
   .string()
   .refine((value) => {
-    const trimmed = value.trim();
-    const explicitScheme = /^[a-z][a-z0-9+.-]*:/i.exec(trimmed);
-
-    if (!explicitScheme) {
-      return true;
-    }
-
-    if (!/^https?:$/i.test(explicitScheme[0])) {
-      return false;
-    }
-
     try {
-      return ["http:", "https:"].includes(new URL(trimmed).protocol);
+      return ["http:", "https:"].includes(new URL(value).protocol);
     } catch {
-      return false;
+      let firstVisibleCharacter = 0;
+      while (
+        firstVisibleCharacter < value.length &&
+        value.charCodeAt(firstVisibleCharacter) <= 0x20
+      ) {
+        firstVisibleCharacter += 1;
+      }
+      const normalizedSchemeCandidate = value
+        .slice(firstVisibleCharacter)
+        .replace(/[\t\n\r]/g, "");
+
+      return !/^[a-z][a-z0-9+.-]*:/i.test(normalizedSchemeCandidate);
     }
   }, "Use plain text or a valid HTTP(S) URL.")
   .optional();
@@ -122,7 +136,7 @@ export const englishDetailsSchema = z
       "weekly_reflection",
     ]),
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<EnglishArtifactDetails>;
 
 export const koreanDetailsSchema = z
   .object({
@@ -143,7 +157,7 @@ export const koreanDetailsSchema = z
     enjoyment: z.enum(["fun", "neutral", "difficult"]),
     notes: z.string(),
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<KoreanArtifactDetails>;
 
 export const devlogDetailsSchema = z
   .object({
@@ -160,7 +174,7 @@ export const devlogDetailsSchema = z
     ]),
     wordCount: nonNegativeInteger,
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<DevlogArtifactDetails>;
 
 export const tasteDetailsSchema = z
   .object({
@@ -187,7 +201,7 @@ export const tasteDetailsSchema = z
     reasoning: requiredText,
     reusableInsight: requiredText,
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<TasteArtifactDetails>;
 
 export const conversationDetailsSchema = z
   .object({
@@ -211,7 +225,7 @@ export const conversationDetailsSchema = z
     followUpAction: requiredText,
     followUpCompleted: z.boolean(),
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<ConversationArtifactDetails>;
 
 export const marathonDetailsSchema = z
   .object({
@@ -231,7 +245,7 @@ export const marathonDetailsSchema = z
     failed: requiredText,
     lesson: requiredText,
   })
-  .catchall(z.unknown());
+  .catchall(z.unknown()) satisfies z.ZodType<MarathonArtifactDetails>;
 
 export const genericArtifactDetailsSchema = z
   .object({ kind: z.literal("generic") })

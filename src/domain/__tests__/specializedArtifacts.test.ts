@@ -167,17 +167,117 @@ describe("specialized artifact detail schemas", () => {
   });
 
   it("rejects taste photo references with unsafe explicit URL schemes", () => {
-    const result = tasteDetailsSchema.safeParse({
-      kind: "taste_note",
-      category: "visual_design",
-      photoReference: "javascript:alert('unsafe')",
-      firstImpression: "Bold",
-      good: "Clear hierarchy",
-      bad: "Low contrast",
-      reasoning: "The layout guides attention.",
-      reusableInsight: "Keep the hierarchy, raise contrast.",
-    });
+    const unsafeReferences = [
+      "javascript:alert('unsafe')",
+      "java\nscript:alert(1)",
+      "java\tscript:alert(1)",
+      "java\rscript:alert(1)",
+      "\u0001javascript:alert(1)",
+    ];
 
-    expect(result.success).toBe(false);
+    for (const photoReference of unsafeReferences) {
+      const result = tasteDetailsSchema.safeParse({
+        kind: "taste_note",
+        category: "visual_design",
+        photoReference,
+        firstImpression: "Bold",
+        good: "Clear hierarchy",
+        bad: "Low contrast",
+        reasoning: "The layout guides attention.",
+        reusableInsight: "Keep the hierarchy, raise contrast.",
+      });
+
+      expect(result.success).toBe(false);
+    }
+  });
+
+  it.each([
+    [
+      "English",
+      () =>
+        englishDetailsSchema.parse({
+          kind: "english_note",
+          practiceType: "speaking",
+          topic: "Introductions",
+          durationMinutes: 10,
+          confidence: 3,
+          notes: "",
+          mistakesNoticed: "",
+          improvedVersion: "",
+          template: "none",
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+    [
+      "Korean",
+      () =>
+        koreanDetailsSchema.parse({
+          kind: "korean_note",
+          activityType: "listening",
+          wordsLearned: [],
+          phrasesLearned: [],
+          source: "Podcast",
+          durationMinutes: 10,
+          enjoyment: "neutral",
+          notes: "",
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+    [
+      "devlog",
+      () =>
+        devlogDetailsSchema.parse({
+          kind: "devlog",
+          devlogType: "technical_note",
+          wordCount: 200,
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+    [
+      "taste",
+      () =>
+        tasteDetailsSchema.parse({
+          kind: "taste_note",
+          category: "product",
+          firstImpression: "Useful",
+          good: "Focused",
+          bad: "Limited",
+          reasoning: "It solves one problem well.",
+          reusableInsight: "Keep the scope narrow.",
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+    [
+      "conversation",
+      () =>
+        conversationDetailsSchema.parse({
+          kind: "conversation_reflection",
+          activityType: "intentional_question",
+          context: "Mentoring session",
+          questionAsked: "What should I improve?",
+          bestInsight: "Write smaller changes.",
+          selfObservation: "I defended the first approach.",
+          improvement: "Ask a follow-up before responding.",
+          followUpAction: "Review the next change together.",
+          followUpCompleted: false,
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+    [
+      "marathon",
+      () =>
+        marathonDetailsSchema.parse({
+          kind: "marathon_reflection",
+          reflectionType: "recovery_note",
+          energy: 2,
+          mentalCondition: "Tired",
+          worked: "Walking",
+          failed: "Sleep",
+          lesson: "Prioritize recovery.",
+          compatibleExtra: "preserved",
+        }).compatibleExtra,
+    ],
+  ])("preserves unknown keys for %s details", (_name, parseExtra) => {
+    expect(parseExtra()).toBe("preserved");
   });
 });
