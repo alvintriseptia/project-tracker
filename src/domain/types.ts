@@ -89,6 +89,130 @@ export type MonthlyReviewDetails = {
   nextMonthFocus: string;
 };
 
+export type EnglishArtifactDetails = {
+  kind: "english_note";
+  practiceType:
+    | "speaking"
+    | "writing"
+    | "voice_recording"
+    | "technical_explanation"
+    | "career_answer"
+    | "reflection"
+    | "devlog_drafting"
+    | "mock_interview";
+  topic: string;
+  durationMinutes: number;
+  confidence: 1 | 2 | 3 | 4 | 5;
+  notes: string;
+  mistakesNoticed: string;
+  improvedVersion: string;
+  template:
+    | "none"
+    | "technical_explanation"
+    | "career_answer"
+    | "weekly_reflection";
+  [key: string]: unknown;
+};
+
+export type KoreanArtifactDetails = {
+  kind: "korean_note";
+  activityType:
+    | "vocabulary_review"
+    | "hangul_reading"
+    | "listening"
+    | "short_lesson"
+    | "grammar_note"
+    | "media_observation"
+    | "phrase_collection";
+  wordsLearned: string[];
+  phrasesLearned: string[];
+  source: string;
+  durationMinutes: number;
+  enjoyment: "fun" | "neutral" | "difficult";
+  notes: string;
+  [key: string]: unknown;
+};
+
+export type DevlogArtifactDetails = {
+  kind: "devlog";
+  devlogType:
+    | "product_devlog"
+    | "technical_note"
+    | "weekly_reflection"
+    | "marathon_essay"
+    | "learning_note"
+    | "taste_reflection"
+    | "conversation_insight"
+    | "portfolio_post";
+  wordCount: number;
+  [key: string]: unknown;
+};
+
+export type TasteArtifactDetails = {
+  kind: "taste_note";
+  category:
+    | "food_drink"
+    | "place"
+    | "product"
+    | "visual_design"
+    | "storytelling"
+    | "lifestyle"
+    | "software_app"
+    | "city_observation"
+    | "coffee_shop"
+    | "custom";
+  customCategory?: string;
+  location?: string;
+  rating?: 1 | 2 | 3 | 4 | 5;
+  photoReference?: string;
+  firstImpression: string;
+  good: string;
+  bad: string;
+  reasoning: string;
+  reusableInsight: string;
+  [key: string]: unknown;
+};
+
+export type ConversationArtifactDetails = {
+  kind: "conversation_reflection";
+  activityType:
+    | "intentional_question"
+    | "deep_conversation"
+    | "alumni_dinner"
+    | "career_conversation"
+    | "friend_conversation"
+    | "family_conversation"
+    | "community_conversation"
+    | "follow_up";
+  context: string;
+  personOrGroup?: string;
+  questionAsked: string;
+  bestInsight: string;
+  selfObservation: string;
+  improvement: string;
+  followUpAction: string;
+  followUpCompleted: boolean;
+  [key: string]: unknown;
+};
+
+export type MarathonArtifactDetails = {
+  kind: "marathon_reflection";
+  reflectionType:
+    | "long_run_reflection"
+    | "training_lesson"
+    | "race_preparation"
+    | "recovery_note"
+    | "discipline_note";
+  distanceKm?: number;
+  pace?: string;
+  energy: 1 | 2 | 3 | 4 | 5;
+  mentalCondition: string;
+  worked: string;
+  failed: string;
+  lesson: string;
+  [key: string]: unknown;
+};
+
 export type GenericArtifactDetails = {
   kind: "generic";
   [key: string]: unknown;
@@ -97,6 +221,12 @@ export type GenericArtifactDetails = {
 export type ArtifactDetails =
   | WeeklyReviewDetails
   | MonthlyReviewDetails
+  | EnglishArtifactDetails
+  | KoreanArtifactDetails
+  | DevlogArtifactDetails
+  | TasteArtifactDetails
+  | ConversationArtifactDetails
+  | MarathonArtifactDetails
   | GenericArtifactDetails;
 
 export type Artifact = AuditFields & {

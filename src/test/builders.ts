@@ -1,4 +1,4 @@
-import type { Activity, Track } from "../domain/types";
+import type { Activity, Artifact, Track } from "../domain/types";
 
 const timestamp = "2026-06-14T00:00:00.000Z";
 
@@ -35,6 +35,22 @@ export function buildActivity(overrides: Partial<Activity> = {}): Activity {
     bonusPoints: 0,
     tags: [],
     artifactIds: [],
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    ...overrides,
+  };
+}
+
+export function buildArtifact(overrides: Partial<Artifact> = {}): Artifact {
+  return {
+    id: "artifact-1",
+    type: "custom",
+    title: "Artifact",
+    date: "2026-06-14",
+    tags: [],
+    status: "drafting",
+    content: "",
+    details: { kind: "generic" },
     createdAt: timestamp,
     updatedAt: timestamp,
     ...overrides,

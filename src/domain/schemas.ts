@@ -10,6 +10,29 @@ const nonNegativeInteger = z.number().int().min(0);
 const yearMonthSchema = z
   .string()
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Use YYYY-MM format.");
+const oneToFiveInteger = z.number().int().min(1).max(5);
+
+export const optionalHttpOrText = z
+  .string()
+  .refine((value) => {
+    const trimmed = value.trim();
+    const explicitScheme = /^[a-z][a-z0-9+.-]*:/i.exec(trimmed);
+
+    if (!explicitScheme) {
+      return true;
+    }
+
+    if (!/^https?:$/i.test(explicitScheme[0])) {
+      return false;
+    }
+
+    try {
+      return ["http:", "https:"].includes(new URL(trimmed).protocol);
+    } catch {
+      return false;
+    }
+  }, "Use plain text or a valid HTTP(S) URL.")
+  .optional();
 
 export const trackSchema = z.object({
   id: requiredText,
@@ -73,6 +96,143 @@ export const monthlyReviewDetailsSchema = z.object({
   nextMonthFocus: z.string(),
 });
 
+export const englishArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("english_note"),
+    practiceType: z.enum([
+      "speaking",
+      "writing",
+      "voice_recording",
+      "technical_explanation",
+      "career_answer",
+      "reflection",
+      "devlog_drafting",
+      "mock_interview",
+    ]),
+    topic: requiredText,
+    durationMinutes: nonNegativeInteger,
+    confidence: oneToFiveInteger,
+    notes: z.string(),
+    mistakesNoticed: z.string(),
+    improvedVersion: z.string(),
+    template: z.enum([
+      "none",
+      "technical_explanation",
+      "career_answer",
+      "weekly_reflection",
+    ]),
+  })
+  .catchall(z.unknown());
+
+export const koreanArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("korean_note"),
+    activityType: z.enum([
+      "vocabulary_review",
+      "hangul_reading",
+      "listening",
+      "short_lesson",
+      "grammar_note",
+      "media_observation",
+      "phrase_collection",
+    ]),
+    wordsLearned: z.array(z.string()),
+    phrasesLearned: z.array(z.string()),
+    source: requiredText,
+    durationMinutes: nonNegativeInteger,
+    enjoyment: z.enum(["fun", "neutral", "difficult"]),
+    notes: z.string(),
+  })
+  .catchall(z.unknown());
+
+export const devlogArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("devlog"),
+    devlogType: z.enum([
+      "product_devlog",
+      "technical_note",
+      "weekly_reflection",
+      "marathon_essay",
+      "learning_note",
+      "taste_reflection",
+      "conversation_insight",
+      "portfolio_post",
+    ]),
+    wordCount: nonNegativeInteger,
+  })
+  .catchall(z.unknown());
+
+export const tasteArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("taste_note"),
+    category: z.enum([
+      "food_drink",
+      "place",
+      "product",
+      "visual_design",
+      "storytelling",
+      "lifestyle",
+      "software_app",
+      "city_observation",
+      "coffee_shop",
+      "custom",
+    ]),
+    customCategory: requiredText.optional(),
+    location: requiredText.optional(),
+    rating: oneToFiveInteger.optional(),
+    photoReference: optionalHttpOrText,
+    firstImpression: requiredText,
+    good: requiredText,
+    bad: requiredText,
+    reasoning: requiredText,
+    reusableInsight: requiredText,
+  })
+  .catchall(z.unknown());
+
+export const conversationArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("conversation_reflection"),
+    activityType: z.enum([
+      "intentional_question",
+      "deep_conversation",
+      "alumni_dinner",
+      "career_conversation",
+      "friend_conversation",
+      "family_conversation",
+      "community_conversation",
+      "follow_up",
+    ]),
+    context: requiredText,
+    personOrGroup: requiredText.optional(),
+    questionAsked: requiredText,
+    bestInsight: requiredText,
+    selfObservation: requiredText,
+    improvement: requiredText,
+    followUpAction: requiredText,
+    followUpCompleted: z.boolean(),
+  })
+  .catchall(z.unknown());
+
+export const marathonArtifactDetailsSchema = z
+  .object({
+    kind: z.literal("marathon_reflection"),
+    reflectionType: z.enum([
+      "long_run_reflection",
+      "training_lesson",
+      "race_preparation",
+      "recovery_note",
+      "discipline_note",
+    ]),
+    distanceKm: z.number().min(0).optional(),
+    pace: requiredText.optional(),
+    energy: oneToFiveInteger,
+    mentalCondition: requiredText,
+    worked: requiredText,
+    failed: requiredText,
+    lesson: requiredText,
+  })
+  .catchall(z.unknown());
+
 export const genericArtifactDetailsSchema = z
   .object({ kind: z.literal("generic") })
   .catchall(z.unknown());
@@ -80,6 +240,12 @@ export const genericArtifactDetailsSchema = z
 export const artifactDetailsSchema = z.union([
   weeklyReviewDetailsSchema,
   monthlyReviewDetailsSchema,
+  englishArtifactDetailsSchema,
+  koreanArtifactDetailsSchema,
+  devlogArtifactDetailsSchema,
+  tasteArtifactDetailsSchema,
+  conversationArtifactDetailsSchema,
+  marathonArtifactDetailsSchema,
   genericArtifactDetailsSchema,
 ]);
 
