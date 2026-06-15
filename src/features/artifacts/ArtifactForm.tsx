@@ -39,10 +39,14 @@ function getInitialDetails(
   type: Artifact["type"],
   artifact?: Artifact,
 ): ArtifactDetails {
-  if (!isSpecializedArtifactType(type)) return { kind: "generic" };
-  return artifact?.details.kind === type
+  if (isSpecializedArtifactType(type)) {
+    return artifact?.details.kind === type
+      ? artifact.details
+      : defaultDetails(type);
+  }
+  return artifact?.details.kind === "generic"
     ? artifact.details
-    : defaultDetails(type);
+    : { kind: "generic" };
 }
 
 function hasUserSpecializedDetails(
@@ -120,7 +124,9 @@ export function ArtifactForm({
       title: artifact?.title ?? "",
       type: selectedInitialType,
       date: artifact?.date ?? today,
-      trackId: artifact?.trackId ?? initialTrackId ?? initialWorkflowTrackId ?? "",
+      trackId: artifact
+        ? artifact.trackId ?? ""
+        : initialTrackId ?? initialWorkflowTrackId ?? "",
       tags: artifact?.tags.join(", ") ?? "",
       status: artifact?.status ?? "drafting",
       content: artifact?.content ?? "",
@@ -158,7 +164,7 @@ export function ArtifactForm({
         { shouldDirty: true },
       );
       const defaultTrackId = workflowDefaultTrackId(nextType);
-      if (defaultTrackId) {
+      if (!artifact && defaultTrackId) {
         setValue("trackId", defaultTrackId, { shouldDirty: true });
       }
       return;

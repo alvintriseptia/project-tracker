@@ -105,9 +105,4 @@ export const artifactFormSchema = z.discriminatedUnion("type", [
 ]);
 
 export type ArtifactFormInput = z.input<typeof artifactFormSchema>;
-type ParsedArtifactFormValues = z.output<typeof artifactFormSchema>;
-export type ArtifactFormValues = ParsedArtifactFormValues extends infer Values
-  ? Values extends { details: infer Details }
-    ? Omit<Values, "details"> & { details?: Details }
-    : never
-  : never;
+export type ArtifactFormValues = z.output<typeof artifactFormSchema>;

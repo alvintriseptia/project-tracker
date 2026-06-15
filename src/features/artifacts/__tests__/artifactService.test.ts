@@ -1,4 +1,5 @@
 import { initializeDatabase } from "../../../db/initialize";
+import { defaultDetails } from "../../../domain/specializedArtifacts";
 import { createTestDatabase } from "../../../test/database";
 import { saveGenericArtifact } from "../artifactService";
 
@@ -20,6 +21,7 @@ describe("generic artifact service", () => {
         content: "Evidence",
         externalLink: "",
         createActivity: true,
+        details: defaultDetails("english_note"),
       },
     });
     expect(await database.artifacts.get(artifact.id)).toBeDefined();

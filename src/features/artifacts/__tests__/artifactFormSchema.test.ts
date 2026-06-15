@@ -1,5 +1,8 @@
 import { defaultDetails } from "../../../domain/specializedArtifacts";
-import { artifactFormSchema } from "../artifactFormSchema";
+import {
+  artifactFormSchema,
+  type ArtifactFormValues,
+} from "../artifactFormSchema";
 
 const sharedFields = {
   title: "Artifact title",
@@ -13,6 +16,23 @@ const sharedFields = {
 } as const;
 
 describe("artifact form schema", () => {
+  it("requires details in the parsed form value type", () => {
+    const parsed: ArtifactFormValues = artifactFormSchema.parse({
+      ...sharedFields,
+      type: "custom",
+      details: { kind: "generic" },
+    });
+
+    expect(parsed.details.kind).toBe("generic");
+
+    // @ts-expect-error Parsed form values must always include details.
+    const missingDetails: ArtifactFormValues = {
+      ...sharedFields,
+      type: "custom",
+    };
+    expect(missingDetails.type).toBe("custom");
+  });
+
   it("parses specialized details that match the selected type", () => {
     const details = defaultDetails("english_note");
     details.topic = "Database transactions";

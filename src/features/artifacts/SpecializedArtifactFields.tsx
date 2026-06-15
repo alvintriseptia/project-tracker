@@ -119,8 +119,9 @@ function EnglishFields({
   const content = typeof watchedContent === "string" ? watchedContent : "";
 
   function applyTemplate(template: keyof typeof englishTemplates) {
+    const current = content;
     if (
-      content !== "" &&
+      current.trim() &&
       !window.confirm("Replace the current content with this template?")
     ) {
       return;
@@ -304,8 +305,9 @@ function DevlogFields({
   }, [count, setValue]);
 
   function applyTemplate() {
+    const current = content;
     if (
-      content !== "" &&
+      current.trim() &&
       !window.confirm("Replace the current content with this template?")
     ) {
       return;
