@@ -1,15 +1,15 @@
 import {
-  conversationArtifactDetailsSchema,
-  devlogArtifactDetailsSchema,
-  englishArtifactDetailsSchema,
-  koreanArtifactDetailsSchema,
-  marathonArtifactDetailsSchema,
-  tasteArtifactDetailsSchema,
+  conversationDetailsSchema,
+  devlogDetailsSchema,
+  englishDetailsSchema,
+  koreanDetailsSchema,
+  marathonDetailsSchema,
+  tasteDetailsSchema,
 } from "../schemas";
 
 describe("specialized artifact detail schemas", () => {
   it("parses English practice details and preserves unknown keys", () => {
-    const parsed = englishArtifactDetailsSchema.parse({
+    const parsed = englishDetailsSchema.parse({
       kind: "english_note",
       practiceType: "technical_explanation",
       topic: "Database transactions",
@@ -27,7 +27,7 @@ describe("specialized artifact detail schemas", () => {
 
   it("parses Korean learning details", () => {
     expect(
-      koreanArtifactDetailsSchema.parse({
+      koreanDetailsSchema.parse({
         kind: "korean_note",
         activityType: "vocabulary_review",
         wordsLearned: [],
@@ -42,7 +42,7 @@ describe("specialized artifact detail schemas", () => {
 
   it("parses devlog details", () => {
     expect(
-      devlogArtifactDetailsSchema.parse({
+      devlogDetailsSchema.parse({
         kind: "devlog",
         devlogType: "product_devlog",
         wordCount: 750,
@@ -58,7 +58,8 @@ describe("specialized artifact detail schemas", () => {
     const base = {
       kind: "taste_note",
       category: "coffee_shop",
-      location: "Jakarta",
+      customCategory: "",
+      location: "",
       rating: 4,
       firstImpression: "Quiet and focused",
       good: "Balanced coffee",
@@ -67,14 +68,18 @@ describe("specialized artifact detail schemas", () => {
       reusableInsight: "Prefer warm lighting and low music.",
     } as const;
 
+    const parsedPlainReference = tasteDetailsSchema.parse({
+      ...base,
+      photoReference: "phone album: IMG_1024",
+    });
+
+    expect(parsedPlainReference).toMatchObject({
+      customCategory: "",
+      location: "",
+      photoReference: "phone album: IMG_1024",
+    });
     expect(
-      tasteArtifactDetailsSchema.parse({
-        ...base,
-        photoReference: "phone album: IMG_1024",
-      }).photoReference,
-    ).toBe("phone album: IMG_1024");
-    expect(
-      tasteArtifactDetailsSchema.parse({
+      tasteDetailsSchema.parse({
         ...base,
         photoReference: "https://example.com/photo.jpg",
       }).photoReference,
@@ -83,7 +88,7 @@ describe("specialized artifact detail schemas", () => {
 
   it("parses conversation reflection details", () => {
     expect(
-      conversationArtifactDetailsSchema.parse({
+      conversationDetailsSchema.parse({
         kind: "conversation_reflection",
         activityType: "career_conversation",
         context: "Coffee with a senior engineer",
@@ -103,7 +108,7 @@ describe("specialized artifact detail schemas", () => {
 
   it("parses marathon reflection details", () => {
     expect(
-      marathonArtifactDetailsSchema.parse({
+      marathonDetailsSchema.parse({
         kind: "marathon_reflection",
         reflectionType: "long_run_reflection",
         distanceKm: 18.5,
@@ -118,7 +123,7 @@ describe("specialized artifact detail schemas", () => {
   });
 
   it("rejects ratings outside the 1-5 range", () => {
-    const result = tasteArtifactDetailsSchema.safeParse({
+    const result = tasteDetailsSchema.safeParse({
       kind: "taste_note",
       category: "food_drink",
       rating: 6,
@@ -134,7 +139,7 @@ describe("specialized artifact detail schemas", () => {
 
   it("rejects negative duration and distance values", () => {
     expect(
-      englishArtifactDetailsSchema.safeParse({
+      englishDetailsSchema.safeParse({
         kind: "english_note",
         practiceType: "speaking",
         topic: "Introductions",
@@ -148,7 +153,7 @@ describe("specialized artifact detail schemas", () => {
     ).toBe(false);
 
     expect(
-      marathonArtifactDetailsSchema.safeParse({
+      marathonDetailsSchema.safeParse({
         kind: "marathon_reflection",
         reflectionType: "training_lesson",
         distanceKm: -0.1,
@@ -162,7 +167,7 @@ describe("specialized artifact detail schemas", () => {
   });
 
   it("rejects taste photo references with unsafe explicit URL schemes", () => {
-    const result = tasteArtifactDetailsSchema.safeParse({
+    const result = tasteDetailsSchema.safeParse({
       kind: "taste_note",
       category: "visual_design",
       photoReference: "javascript:alert('unsafe')",

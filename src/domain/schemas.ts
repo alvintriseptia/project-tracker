@@ -96,7 +96,7 @@ export const monthlyReviewDetailsSchema = z.object({
   nextMonthFocus: z.string(),
 });
 
-export const englishArtifactDetailsSchema = z
+export const englishDetailsSchema = z
   .object({
     kind: z.literal("english_note"),
     practiceType: z.enum([
@@ -124,7 +124,7 @@ export const englishArtifactDetailsSchema = z
   })
   .catchall(z.unknown());
 
-export const koreanArtifactDetailsSchema = z
+export const koreanDetailsSchema = z
   .object({
     kind: z.literal("korean_note"),
     activityType: z.enum([
@@ -145,7 +145,7 @@ export const koreanArtifactDetailsSchema = z
   })
   .catchall(z.unknown());
 
-export const devlogArtifactDetailsSchema = z
+export const devlogDetailsSchema = z
   .object({
     kind: z.literal("devlog"),
     devlogType: z.enum([
@@ -162,7 +162,7 @@ export const devlogArtifactDetailsSchema = z
   })
   .catchall(z.unknown());
 
-export const tasteArtifactDetailsSchema = z
+export const tasteDetailsSchema = z
   .object({
     kind: z.literal("taste_note"),
     category: z.enum([
@@ -177,8 +177,8 @@ export const tasteArtifactDetailsSchema = z
       "coffee_shop",
       "custom",
     ]),
-    customCategory: requiredText.optional(),
-    location: requiredText.optional(),
+    customCategory: z.string().trim().optional(),
+    location: z.string().trim().optional(),
     rating: oneToFiveInteger.optional(),
     photoReference: optionalHttpOrText,
     firstImpression: requiredText,
@@ -189,7 +189,7 @@ export const tasteArtifactDetailsSchema = z
   })
   .catchall(z.unknown());
 
-export const conversationArtifactDetailsSchema = z
+export const conversationDetailsSchema = z
   .object({
     kind: z.literal("conversation_reflection"),
     activityType: z.enum([
@@ -213,7 +213,7 @@ export const conversationArtifactDetailsSchema = z
   })
   .catchall(z.unknown());
 
-export const marathonArtifactDetailsSchema = z
+export const marathonDetailsSchema = z
   .object({
     kind: z.literal("marathon_reflection"),
     reflectionType: z.enum([
@@ -240,12 +240,12 @@ export const genericArtifactDetailsSchema = z
 export const artifactDetailsSchema = z.union([
   weeklyReviewDetailsSchema,
   monthlyReviewDetailsSchema,
-  englishArtifactDetailsSchema,
-  koreanArtifactDetailsSchema,
-  devlogArtifactDetailsSchema,
-  tasteArtifactDetailsSchema,
-  conversationArtifactDetailsSchema,
-  marathonArtifactDetailsSchema,
+  englishDetailsSchema,
+  koreanDetailsSchema,
+  devlogDetailsSchema,
+  tasteDetailsSchema,
+  conversationDetailsSchema,
+  marathonDetailsSchema,
   genericArtifactDetailsSchema,
 ]);
 
