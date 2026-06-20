@@ -193,4 +193,4 @@ Before opening a pull request:
 
 ## License
 
-No license file is currently declared. Add a `LICENSE` file before publishing this repository as open source; without one, others do not have clear legal permission to use, modify, or redistribute the code.
+MIT License. See [LICENSE](LICENSE).
