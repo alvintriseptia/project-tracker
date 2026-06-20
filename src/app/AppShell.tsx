@@ -3,11 +3,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 import {
   CalendarCheck2,
   CalendarDays,
+  ChartNoAxesColumnIncreasing,
   ClipboardCheck,
   FileText,
   FolderKanban,
   Menu,
   Plus,
+  Search,
   Settings,
   Target,
 } from "lucide-react";
@@ -29,6 +31,8 @@ const navigation = [
   { to: "/reviews/weekly", label: "Weekly Review", icon: ClipboardCheck },
   { to: "/missions", label: "Missions", icon: Target },
   { to: "/artifacts", label: "Artifacts", icon: FileText },
+  { to: "/insights", label: "Insights", icon: ChartNoAxesColumnIncreasing },
+  { to: "/search", label: "Search", icon: Search },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 

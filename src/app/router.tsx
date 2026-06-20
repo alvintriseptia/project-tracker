@@ -41,6 +41,12 @@ const MissionDetailPage = lazy(() =>
 const CalendarPage = lazy(() =>
   import("../features/calendar/CalendarPage").then((module) => ({ default: module.CalendarPage })),
 );
+const InsightsPage = lazy(() =>
+  import("../features/insights/InsightsPage").then((module) => ({ default: module.InsightsPage })),
+);
+const SearchPage = lazy(() =>
+  import("../features/search/SearchPage").then((module) => ({ default: module.SearchPage })),
+);
 
 function deferred(element: React.ReactNode) {
   return (
@@ -69,6 +75,8 @@ export const router = createBrowserRouter(
         { path: "artifacts/new/:type?", element: deferred(<ArtifactEditorPage />) },
         { path: "artifacts/:artifactId/edit", element: deferred(<ArtifactEditorPage />) },
         { path: "artifacts/:artifactId", element: deferred(<ArtifactDetailPage />) },
+        { path: "insights", element: deferred(<InsightsPage />) },
+        { path: "search", element: deferred(<SearchPage />) },
         { path: "settings", element: deferred(<SettingsPage />) },
         { path: "*", element: <NotFoundPage /> },
       ],
