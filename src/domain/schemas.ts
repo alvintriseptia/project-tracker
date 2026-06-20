@@ -321,6 +321,38 @@ export const monthlyMissionSchema = z.object({
   updatedAt: instantSchema,
 });
 
+const workStatusSchema = z.enum([
+  "idea",
+  "planned",
+  "in_progress",
+  "blocked",
+  "done",
+  "archived",
+]);
+
+export const vinanceFeatureSchema = z.object({
+  id: requiredText,
+  name: requiredText,
+  description: z.string().trim().min(1).optional(),
+  module: requiredText,
+  priority: z.enum(["low", "medium", "high", "critical"]),
+  status: workStatusSchema,
+  notes: z.string().trim().min(1).optional(),
+  createdAt: instantSchema,
+  updatedAt: instantSchema,
+});
+
+export const vinanceTaskSchema = z.object({
+  id: requiredText,
+  featureId: requiredText,
+  title: requiredText,
+  description: z.string().trim().min(1).optional(),
+  status: workStatusSchema,
+  sortOrder: z.number().int(),
+  createdAt: instantSchema,
+  updatedAt: instantSchema,
+});
+
 export const appSettingsSchema = z
   .object({
     id: z.literal("app"),
